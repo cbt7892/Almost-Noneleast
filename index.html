@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Almost Noneleast Calculator</title>
+  <style type="text/css">
+    .bodytext {
+      text-align: center;
+    }
+    body {
+      text-align: center;
+    }
+    form {
+      display: inline-block;
+    }
+    #form_input {
+      left: 45%;
+      top: 40%;
+      position: absolute;
+    }
+    </style>
+</head>
+<body>
+  <div class="bodytext"> This is a calculator to convert time from hours,
+    minutes, and seconds (gross) to almosts and
+      noneleasts (woo!) <br> Please enter whole numbers. </div>
+      <br> <br> <br><br><br><br><br><br>
+    <div style="overflow: hidden;">
+      <p style="float: left;"> Almost </p>
+      <p style="float: right;"> Noneleast </p>
+    </div>
+    <div style="overflow: hidden;">
+      <p style="float: left;"> 1 - 15 min </p>
+      <p style="float: right;"> 1 - 24 hours </p>
+    </div>
+    <div style="overflow: hidden;">
+      <p style="float: left;"> 2 - 20 min </p>
+      <p style="float: right;"> 2 - 12 hours </p>
+    </div>
+    <div style="overflow: hidden;">
+      <p style="float: left;"> 3 - 21 min </p>
+      <p style="float: right;"> 3 - 6 hours </p>
+    </div>
+    <div style="overflow: hidden;">
+      <p style="float: left;"> 4 - 21 min 15 sec </p>
+      <p style="float: right;"> 4 - 3 hours </p>
+    </div>
+    <div style="overflow: hidden;">
+      <p style="float: left;"> 5 - 21 min 20 sec </p>
+      <p style="float: right;"> 5 - 1 hour 30 min </p>
+    </div>
+    <div style="overflow: hidden;">
+      <p style="float: left;"> 6 - 21 min 21 sec </p>
+      <p style="float: right;"> 6 - 45 min </p>
+    </div>
+    <div id="parent"><form id="form_input">
+      <label for="fname">Hours</label><br>
+      <input type="text" id="hours" name="hours" value="0"><br>
+      <label for="lname">Minutes</label><br>
+      <input type="text" id="minutes" name="minutes" value="0"><br>
+      <label for="lname">Seconds</label><br>
+      <input type="text" id="minutes" name="minutes" value="0"><br>
+    </form><button onclick="calculate()">Submit</button></div>
+    <p id="demo"></p>
+    <script>
+      function calculate() {
+        var x = document.getElementById("form_input");
+        var text = "";
+        var suffixes = [" hours, ", " minutes, and ", " seconds"]
+        for (var i = 0; i < x.length; i++) {
+          text += x.elements[i].value + suffixes[i];
+        }
+        var hours = parseInt(x.elements[0].value);
+        var minutes = parseInt(x.elements[1].value);
+        var seconds = parseInt(x.elements[2].value);
+
+        seconds += (3600 * hours) + (60 * minutes);
+
+        document.getElementById("demo").innerHTML = text + "<br>" +
+        almosts(seconds) + "<br>" + noneleasts(seconds) + "<br>";
+      }
+
+      function almosts(seconds) {
+        var almosts = 0;
+        if (seconds > 1281) { // did regression. this part doesnt really make sense because the almost system isn't consistent
+          almosts = 1.48712 + 0.00000000000000000000000000001 * Math.pow(1.05583, seconds);
+        }
+        else if (seconds <= (21 * 60) + 21 && seconds >= (21 * 60) + 20) {
+          var after2121 = seconds - ((21 * 60) + 20);
+          almosts = 5 + after2121;
+        }
+        else if (seconds < (21 * 60) + 20 && seconds >= (21 * 60) + 15) {
+          var after2120 = seconds - ((21 * 60) + 15);
+          after2120 /= (5);
+          almosts = 4 + after2120;
+        }
+        else if (seconds < (21 * 60) + 15 && seconds >= 21 * 60) {
+          var after2115 = seconds - (21 * 60);
+          after2115 /= (15);
+          almosts = 3 + after2115;
+        }
+        else if (seconds < 21 * 60 && seconds >= 20 * 60) {
+          var after20 = seconds - (20 * 60);
+          after20 /= (60);
+          almosts = 2 + after20;
+        }
+        else if (seconds < 20 * 60 && seconds >= 15 * 60) {
+          var after15 = seconds - (15 * 60);
+          after15 /= (5 * 60);
+          almosts = 1 + after15;
+        }
+        else {
+          almosts = 1 / ((15 * 60) / seconds);
+        }
+        return displayWordXTimes("almost", almosts);
+      }
+
+      function noneleasts(seconds) {
+        var noneleasts = 0;
+        if (seconds >= 24 * 3600) {
+          noneleasts = 1 / (seconds / (24 * 3600));
+        }
+        else {
+          var minNoneleasts = Math.floor(1 + Math.log2((24 * 3600) / seconds));
+          var secUpper = (24 * 3600) / (Math.pow(2, minNoneleasts - 1));
+          var secLower = (24 * 3600) / (Math.pow(2, minNoneleasts));
+          var afterUpper = secUpper - seconds;
+          afterUpper /= secLower;
+          noneleasts = minNoneleasts + afterUpper;
+        }
+        return displayWordXTimes("noneleast", noneleasts);
+      }
+
+      function displayWordXTimes(word, count) {
+        if (count <= (1/word.length)) return "" + count + " " + word + "s (not enough to display)";
+        if (count >= 100) return "" + count + " " + word + "s (too many to display)";
+        var returnString = "" + count + " " + word + "s";
+        returnString += " (";
+        var wordChars = [];
+        for (var i = 0; i < word.length; i++) {
+          wordChars.push(word.substring(i, i + 1));
+        }
+        var index = 0;
+        for (var i = 0; i < Math.floor((count + Number.EPSILON) * word.length); i++) {
+          returnString += wordChars[index];
+          if (i < (Math.floor((count + Number.EPSILON) * word.length) - 1) && index == word.length - 1) {
+            returnString += " ";
+          }
+          index++;
+          index %= word.length;
+        }
+        returnString += ")";
+        return returnString;
+      }
+</script>
+</body>
+</html>
