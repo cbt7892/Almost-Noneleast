@@ -13,7 +13,7 @@
     form {
       display: inline-block;
     }
-    #form_input {
+    .parent (
       left: 45%;
       top: 40%;
       position: absolute;
@@ -53,7 +53,7 @@
       <p style="float: left;"> 6 - 21 min 21 sec </p>
       <p style="float: right;"> 6 - 45 min </p>
     </div>
-    <div id="parent"><form id="form_input">
+    <div id="parent" class="parent"><form id="form_input">
       <label for="fname">Hours</label><br>
       <input type="text" id="hours" name="hours" value="0"><br>
       <label for="lname">Minutes</label><br>
@@ -61,7 +61,7 @@
       <label for="lname">Seconds</label><br>
       <input type="text" id="minutes" name="minutes" value="0"><br>
     </form><button onclick="calculate()">Submit</button></div>
-    <p id="demo"></p>
+    <p style="position: fixed; bottom: 0; width: 100%; text-align: center" id="demo"></p>
     <script>
       function calculate() {
         var x = document.getElementById("form_input");
@@ -117,7 +117,10 @@
 
       function noneleasts(seconds) {
         var noneleasts = 0;
-        if (seconds >= 24 * 3600) {
+	if (seconds == 0) {
+	  noneleasts = 0;
+        }
+        else if (seconds >= 24 * 3600) {
           noneleasts = 1 / (seconds / (24 * 3600));
         }
         else {
